@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kothmale hardware project portal</title>
+    <style>
+        /* CSS styles for the page */
+        :root {
+            --color-primary: #3498db;
+            --color-secondary: #2980b9;
+            --color-tertiary: #1a648b;
+            --color-background: #f4f7f6;
+            --color-text: #333;
+            --color-light-text: #fff;
+            --color-hover: #217dbb;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background-color: var(--color-background);
+            color: var(--color-text);
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-title {
+            text-align: center;
+            color: var(--color-secondary);
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        /* Updated CSS for vertical layout */
+        .button-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center; /* Centers the buttons horizontally */
+            padding: 0;
+            list-style: none;
+        }
+
+        .action-button {
+            width: 80%; /* Makes buttons a consistent, large width */
+            max-width: 400px; /* Prevents buttons from getting too wide on large screens */
+            padding: 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--color-primary);
+            color: var(--color-light-text);
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-button:hover {
+            background-color: var(--color-hover);
+            transform: translateY(-3px);
+        }
+
+        /* Specific button colors for variety */
+        .action-button.phdt { background-color: #3498db; }
+        .action-button.palm { background-color: #5d9e5d; }
+        .action-button.summary { background-color: #e67e22; }
+        .action-button.images { background-color: #9b59b6; }
+        .action-button.back-button { background-color: #7f8c8d; }
+
+        /* Adjusting button colors for nested buttons to maintain a cohesive look */
+        .action-button.phdt-nuwara,
+        .action-button.phdt-hatton,
+        .action-button.ragala,
+        .action-button.dayagama,
+        .action-button.castlereigh {
+            background-color: var(--color-secondary);
+        }
+
+        .action-button.phdt-nuwara:hover,
+        .action-button.phdt-hatton:hover,
+        .action-button.ragala:hover,
+        .action-button.dayagama:hover,
+        .action-button.castlereigh:hover {
+            background-color: var(--color-tertiary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">KOTHMALE HARDWARE PROJECT PORTAL</h1>
+        <div id="button-container" class="button-grid">
+            </div>
+    </div>
+
+    <script>
+        /* JavaScript for button functionality */
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttonContainer = document.getElementById('button-container');
+
+            // IMPORTANT: Replace the '#' with your actual Google Sheet links
+            const googleSheetLinks = {
+                'PHDT Nuwara Eliya': '#',
+                'PHDT Hatton': '#',
+                'Ragala': 'https://docs.google.com/spreadsheets/d/1p0apCBsJBkcNGLo1xsDz3SN-bDDlylxglWUujqAB-XY/edit?usp=drive_link',
+                'Dayagama East': '#',
+                'Dayagama East 15': '#',
+                'Dayagama East Water Project': '#',
+                'Castlereigh': '#',
+                'Palm Foundation Projects': '#',
+                'Summary': '#',
+                'Images': '#',
+            };
+
+            const structure = {
+                'PHDT Projects': {
+                    'PHDT Nuwara Eliya': {
+                        'Ragala': null,
+                        'Dayagama East': null,
+                        'Dayagama East 15': null,
+                        'Dayagama East Water Project': null,
+                    },
+                    'PHDT Hatton': {
+                        'Castlereigh': null,
+                    }
+                },
+                'Palm Foundation Projects': null,
+                'Summary': null,
+                'Images': null,
+            };
+
+            let currentPath = [];
+
+            function createButton(text, link) {
+                const button = document.createElement('a');
+                button.className = `action-button ${text.toLowerCase().replace(/\s/g, '-')}`;
+                button.textContent = text;
+                
+                if (link) {
+                    button.href = link;
+                    button.target = '_blank';
+                } else {
+                    button.href = '#';
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentPath.push(text);
+                        renderButtons();
+                    });
+                }
+                return button;
+            }
+
+            function renderButtons() {
+                buttonContainer.innerHTML = '';
+                let currentLevel = structure;
+                
+                if (currentPath.length > 0) {
+                    for (const key of currentPath) {
+                        currentLevel = currentLevel[key];
+                    }
+
+                    // Add a "Back" button
+                    const backButton = document.createElement('a');
+                    backButton.className = 'action-button back-button';
+                    backButton.textContent = 'Back';
+                    backButton.href = '#';
+                    backButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentPath.pop();
+                        renderButtons();
+                    });
+                    buttonContainer.appendChild(backButton);
+                }
+
+                for (const [key, value] of Object.entries(currentLevel)) {
+                    const link = googleSheetLinks[key] || null;
+                    buttonContainer.appendChild(createButton(key, value === null ? link : null));
+                }
+            }
+
+            // Initial rendering of the main page buttons
+            renderButtons();
+        });
+    </script>
+</body>
+</html>
